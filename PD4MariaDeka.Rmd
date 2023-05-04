@@ -1,0 +1,63 @@
+---
+title: "Praca Domowa 4"
+author: "Maria Deka"
+date: '2023-04-04'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(mapdata)
+library(ggplot2)
+```
+
+## 1. Wprowadzenie
+
+Poniższe wizualizacje przedstawiają kolejno ilość gwałtów i  morderstw w poszczególnych stanach USA. Kod użyty do pozyskania danych: 
+
+```{r}
+data <- read.csv("/Users/mariadeka/Desktop/US_violent_crime.csv")
+data <- data %>% 
+  mutate(stan = tolower(X)) %>% 
+  rename(morderstwa = Murder) %>% 
+  rename(gwałty = Rape)
+states <- map_data("state") %>% 
+  rename(stan = region)
+
+to_mapping <- full_join(data, states, by = "stan")
+```
+
+## 2. Wizualizacje
+
+#### Wykres przedstawiający dane dotyczące aresztowań za gwałty na 100 000 osób.
+
+```{r}
+ggplot(data = to_mapping) +
+  geom_polygon(aes(x = long, y = lat, fill = gwałty, group = group), color = "white") +
+  coord_fixed(1.3) +
+  scale_fill_distiller(palette = "Purples", direction = 1)+
+  theme_minimal()+
+  labs(title = "Liczba aresztowań za gwałty w USA",
+       subtitle = "na 100 000 osób",
+       x = "długość geograficzna",
+       y = "szerokość geograficzna")
+```
+
+
+#### Wykres przedstawiający dane dotyczące aresztowań za morderstwa na 100 000 osób.
+
+```{r}
+ggplot(data = to_mapping) +
+  geom_polygon(aes(x = long, y = lat, fill = morderstwa, group = group), color = "white") +
+  coord_fixed(1.3) +
+  scale_fill_distiller(palette = "Purples", direction = 1)+
+  theme_minimal()+
+  labs(title = "Liczba aresztowań za morderstwa w USA",
+       subtitle = "na 100 000 osób",
+       x = "długość geograficzna",
+       y = "szerokość geograficzna") 
+```
+
+## 3. Źródła
+
+Źródło danych wykorzystanych do poniższych wizualizacji: https://www.kaggle.com/datasets/mathchi/violent-crime-rates-by-us-state

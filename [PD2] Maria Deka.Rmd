@@ -1,0 +1,59 @@
+---
+title: '[PD2] Maria Deka'
+author: "mariadeka"
+date: '2023-03-20'
+output:
+  html_document: default
+  pdf_document: default
+---
+
+![źródło: https://agroprofil.pl/wiadomosci/w-2022-roku-polska-odnotowala-rekordowe-dodatnie-saldo-w-handlu-zagranicznym-zywnoscia/](/Users/mariadeka/Downloads/struktura_geo.png)
+
+## Czemu powyższy wykres jest niepoprawny?
+Dane zostały przedstawione na wykresie kołowym, ludzkie oko nie rozróżnia dokładnie kątów, dlatego też często lepszym rozwiązaniem będzie zwizualizowanie danych za pomocą kolumn. Oprócz tego, dwa powyższe wykresy są połączone w sposób niejasny (nie jest jasne przejście, polegajace na zaprezentowaniu na prawym wykresie jedynie krajów z UE), zatem lepszym wyborem przy takich danych okazałyby się 2 wykresy kolumnowe.
+
+
+```{r}
+library(dplyr)
+library(dplyr)
+library(ggplot2)
+library(forcats)
+outside <- c("Pozostałe kraje", "Arabia Saudyjska", "USA", "Ukraina", "Wielka Brytania", "UE")
+outside_data <- c(13, 1, 2, 2, 8, 74)
+inside <- c("Niemcy", "Niderlandy", "Francja", "Włochy", "Czechy", "Hiszpania", "Belgia", "Węgry",
+            "Rumunia", "Słowacja", "Dania", "Litwa", "Szwecja", "Pozostałe kraje UE")
+inside_data <- c(25, 7, 6, 5, 5, 3, 3, 2, 2, 2, 2, 2, 2, 8)
+data_outside <- data.frame(outside, outside_data)
+data_inside <- data.frame(inside, inside_data)
+```
+
+## Moje propozycje wykresów
+```{r}
+data_inside %>%
+  ggplot(aes(x = fct_reorder(inside, inside_data), y = inside_data)) +
+  geom_col(fill = "pink") +
+  geom_text(aes(label = ..inside_data..),  vjust = 0, colour = "black")+
+  labs(title = "Struktura geograficzna polskiego eksportu rolno-spożywczego", 
+       subtitle = "Kraje UE (razem 35.3 mld euro)",
+       x = "",
+       y = "Przychód uzysany z eksportu towarów rolno-spożywczych [%]") +
+  guides(x = guide_axis(angle = 45))+
+  theme_minimal()+
+  theme(legend.position = "none")
+```
+
+
+
+```{r}
+data_outside %>%
+  ggplot(aes(x = fct_reorder(outside, outside_data), y = outside_data)) +
+  geom_col(fill = "lightblue") +
+  geom_text(aes(label = ..outside_data..),  vjust = 0, colour = "black")+
+  labs(title = "Struktura geograficzna polskiego eksportu rolno spożywczego", 
+       subtitle = "Cały świat(razem 47.6 mld euro)",
+       x = "",
+       y = "Przychód uzyskany z eksportu towarów rolno-spożywczych [%]") +
+  guides(x = guide_axis(angle = 45))+
+  theme_minimal()+
+  theme(legend.position = "none")
+```

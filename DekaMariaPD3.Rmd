@@ -1,0 +1,266 @@
+---
+title: "Maria Deka PD3"
+author: "maria deka"
+date: '2023-03-28'
+output:
+  html_document: default
+  pdf_document: default
+---
+
+## 1. Wprowadzenie
+
+W ramach pracy domowej 3 przeprowadziłam eksperyment sprawdzający działanie dobrych praktyk w wizualizacji danych. W swoim eksperymencie skupiłam się na różnicy między wykresami o współrzędnych biegunowych i kartezjańskich. Przypuszczam, że bardziej czytelne będą wykresy, w których zostały wykorzystane współrzędne kartezjańskie, od wykresów ze współrzędnymi biegunowymi.
+
+## 2. Opis eksperymentu
+
+Do przeprowadzenia eksperymentu zwizualizowałam 4 zestawy danych, przy czym wykresy dwóch z nich są przedstawione za pomocą współrzędnych sferycznych, a pozostałych dwóch, współrzędnych biegunowych. 
+
+Następnie za pomocą formularza Google Forms stworzyłam ankietę, w której umieściłam po jednym pytaniu, do każdego z wykresów. Zadaniem ankietowanych było odczytanie z nich danych i wybór poprawnej odpowiedzi. W ankiecie wzięło udział 21 osób w wieku od 17 do 23 lat. 
+
+## 3. Odpowiedzi ankietowanych 
+
+### Wykres 1
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center'}
+library(dplyr)
+library(ggplot2)
+starwars_skora <- starwars%>%
+  group_by(skin_color) %>% 
+  count(skin_color, na.rm = TRUE) %>% 
+  mutate(kolor_skory = ifelse(n == 1, "inne", skin_color)) %>% 
+  mutate(kolor_skory_pl = ifelse(kolor_skory == "fair", "beżowy",
+                                 ifelse(kolor_skory == "green", "zielony",
+                                        ifelse(kolor_skory == "grey", "szary",
+                                               ifelse(kolor_skory == "light", "jasny",
+                                                      ifelse(kolor_skory == "orange", "pomaranczowy",
+                                                             ifelse(kolor_skory == "pale", "blady",
+                                                                    ifelse(kolor_skory == "tan", "opalony",
+                                                                           ifelse(kolor_skory == "unknown", "nieznany",
+                                                                                  ifelse(kolor_skory == "white", "biały",
+                                                                                         ifelse(kolor_skory == "white, blue", "biały, niebieski",
+                                                                                                ifelse(kolor_skory == "yellow", "żółty",
+                                                                                                       ifelse(kolor_skory == "blue", "niebieski",
+                                                                                                              ifelse(kolor_skory == "blue, grey", "niebieski, szary",
+                                                                                                                     ifelse(kolor_skory == "brown", "brązowy",
+                                                                                                                            ifelse(kolor_skory == "dark", "ciemny", kolor_skory))))))))))))))))
+skora_starwars <- starwars_skora %>% 
+  ggplot(aes(x = kolor_skory_pl, y = n)) +
+  geom_col(fill = 'lightblue') +
+  scale_x_discrete(guide = guide_axis(n.dodge = 1, angle = 45))+
+  labs(title = "Kolory skóry postaci 'Gwiezdnych wojen'",
+       x = "kolor skóry",
+       y = "ilość postaci") +
+  coord_polar(theta = "x", start = 0, direction = 1, clip = "on")+
+  theme_minimal(base_size = 9)
+skora_starwars
+```
+
+Pytanie sprawdzające umiejętność odczytania danych z powyższego wykresu brzmiało następująco:
+
+"Ile postaci z  "Gwiezdnych Wojen"  ma skórę koloru zielonego?", do wyboru były trzy odpowiedzi:
+
+a. 6
+
+b. 4
+
+c. 8
+
+
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center'}
+library(dplyr)
+library(ggplot2)
+x <- c("poprawne odpowiedzi", "błędne odpowiedzi")
+y <- c(9, 12)
+wykres <- data.frame(x, y)
+wykres %>% 
+  ggplot(aes(x, y)) +
+  geom_col(fill = "lightblue")+
+  labs(title = "Wykres przedstawiający odpowiedzi ankietowanych na powyższe pytanie",
+       x = "",
+       y = "liczba odpowiedzi") +
+  theme_minimal(base_size = 9)
+```
+
+
+### Wykres 2
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center'}
+library(dplyr)
+library(ggplot2)
+starwars_oczy <- starwars%>%
+  group_by(eye_color) %>% 
+  count(eye_color) %>% 
+  mutate(eye_color_pl = ifelse(eye_color == "black", "czarny",
+                                         ifelse(eye_color == "blue", "niebieski",
+                                                ifelse(eye_color == "blue-gray", "szaroniebieski",
+                                                       ifelse(eye_color == "brown", "brązowy",
+                                                              ifelse(eye_color == "dark", "ciemny",
+                                                                     ifelse(eye_color == "gold", "złoty",
+                                                                            ifelse(eye_color == "green, yellow", "zielony, żółty",
+                                                                                   ifelse(eye_color == "hazel", "kasztanowy",
+                                                                                          ifelse(eye_color == "orange", "pomarańczowy",
+                                                                                                 ifelse(eye_color == "pink", "różowy",
+                                                                                                        ifelse(eye_color == "red", "czerwony",
+                                                                                                               ifelse(eye_color == "red, blue", "czerwony, niebieski",
+                                                                                                                      ifelse(eye_color == "unknown", "nieznany",
+                                                                                                                             ifelse(eye_color == "white", "biały",
+                                                                                                                                    ifelse(eye_color == "yellow", "żółty", kolor_skory))))))))))))))))
+wykres_starwars <- starwars_oczy %>% 
+  ggplot(aes(x = eye_color_pl, y = n)) +
+  geom_col(fill = 'lightblue') +
+  scale_x_discrete(guide = guide_axis(n.dodge = 1, angle = 45))+
+  labs(title = "Kolory oczu postaci 'Starwars'",
+    x = "kolor oczu",
+      y = "liczba postaci") +
+  theme_minimal(base_size = 9)
+wykres_starwars
+```
+
+Pytanie sprawdzające umiejętność odczytania danych z powyższego wykresu brzmiało następująco:
+
+"Ile postaci z  "Gwiezdnych Wojen"  ma oczy koloru czarnego?", do wyboru były trzy odpowiedzi:
+
+a. 10
+
+b. 8
+
+c. 12
+
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center'}
+library(dplyr)
+library(ggplot2)
+x <- c("poprawne odpowiedzi", "błędne odpowiedzi")
+y <- c(21, 0)
+wykres <- data.frame(x, y)
+wykres %>% 
+  ggplot(aes(x, y)) +
+  geom_col(fill = "lightblue")+
+  labs(title = "Wykres przedstawiający odpowiedzi ankietowanych na powyższe pytanie",
+       x = "",
+       y = "liczba odpowiedzi") +
+  theme_minimal(base_size = 9)
+```
+
+
+### Wykres 3
+
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center'}
+library(dplyr)
+library(SmarterPoland)  
+library(ggplot2)
+kraje_wykres <- countries %>% 
+  arrange(population) %>% 
+  top_n(200) %>%  
+  group_by(continent) %>% 
+  count(continent) %>% 
+  mutate(kontynent = ifelse(continent == "Africa", "Afryka",
+                            ifelse(continent == "Americas", "Ameryki",
+                                   ifelse(continent == "Asia", "Azja",
+                                          ifelse(continent == "Europe", "Europa", continent))))) %>% 
+  ggplot(aes(x = kontynent, y = n)) +
+  geom_col(fill = "lightblue")+
+  labs(title = "Podział krajów na kontynenty",
+       subtitle = "z 200 krajów o najmniejszej populacji",
+       x = "Kontynent",
+       y = "Ilość") +
+  coord_polar() +
+  theme_minimal(base_size = 9)
+kraje_wykres
+```
+
+Pytanie sprawdzające umiejętność odczytania danych z powyższego wykresu brzmiało następująco:
+
+"Ile krajów leży w Azji, spośród 200 krajów o najmniejszej populacji?", natomiast do wyboru były trzy odpowiedzi:
+
+a. 42
+
+b. 44
+
+c. 46
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center'}
+library(dplyr)
+library(ggplot2)
+x <- c("poprawne odpowiedzi", "błędne odpowiedzi")
+y <- c(7, 14)
+wykres <- data.frame(x, y)
+wykres %>% 
+  ggplot(aes(x, y)) +
+  geom_col(fill = "lightblue")+
+  labs(title = "Wykres przedstawiający odpowiedzi ankietowanych na powyższe pytanie",
+       x = "",
+       y = "liczba odpowiedzi") +
+  theme_minimal(base_size = 9)
+```
+
+
+### Wykres 4
+
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center'}
+library(dplyr)
+library(ggplot2)
+library(PogromcyDanych)
+auta1 <- auta2012%>%
+  mutate(cena_brutto = ifelse(Brutto.netto == "netto", 1.2 * Cena.w.PLN, Cena.w.PLN)) %>% 
+  arrange(desc(cena_brutto)) %>% 
+  top_n(20) %>% 
+  group_by(Marka) %>% 
+  count(Marka)
+
+  aykres_kar <- auta1 %>% ggplot(aes(x = Marka, y = n)) +
+  geom_col(fill = 'lightblue') +
+  scale_x_discrete(guide = guide_axis(n.dodge = 1, angle = 45))+
+  labs(title = "Liczba samochodów poszczególnych marek",
+       subtitle = "spośród 20 najdroższych samochodów ze zbioru danych 'auta2012'",
+       x = "marka auta",
+       y = "ilość") +
+  theme_minimal(base_size = 9)
+  aykres_kar
+```
+
+
+Pytanie sprawdzające umiejętność odczytania danych z powyższego wykresu brzmiało następująco:
+
+"Ile samochodów marki fiat znalazło się pośród 20 najdroższych z tego zbioru?", natomiast do wyboru były trzy odpowiedzi:
+
+a. 1
+
+b. 2
+
+c. 3
+
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center'}
+library(dplyr)
+library(ggplot2)
+x <- c("poprawne odpowiedzi", "błędne odpowiedzi")
+y <- c(21, 0)
+wykres <- data.frame(x, y)
+wykres %>% 
+  ggplot(aes(x, y)) +
+  geom_col(fill = "lightblue")+
+  labs(title = "Wykres przedstawiający odpowiedzi ankietowanych na powyższe pytanie",
+       x = "",
+       y = "liczba odpowiedzi") +
+  theme_minimal(base_size = 9)
+```
+
+## 4. PODSUMOWANIE
+
+Przeprowadzony eksperyment potwierdza postawioną przeze mnie powyżej tezę, że dane są łatwiejsze do odczytania z wykresów o współrzędnych kartezjańskich, niż o współrzędnych biegunowych.
+
+
+
+
+
+
+
+
+
+
+
+
